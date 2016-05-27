@@ -17,7 +17,7 @@ public:
 	MainWindow(QWidget *parent = 0);
 
 private slots:
-	void beginSimulation();
+	void beginSimulation(bool);
 	void simulationFinished();
 	void errorString(QString); 
 	void chooseResolution(QAction* qa); // messy but works as expected 

@@ -44,6 +44,8 @@ public:
 	RectangleTool *rectangle_tool;
 	LineTool *line_tool;
 
+	bool quit = false;
+
 public slots:
 	void process();
 
@@ -77,7 +79,9 @@ public slots:
 		time.set_time_factor(10);
 	}
 
-	void setShowFPS(bool b) { showFPS = b; }
+	void setShowFPS(bool b) { 
+		showFPS = b; 
+	}
 
 	void setBallToBallCollisions(bool b) {
 		environment->settings.ball_to_ball_collisions = b;
@@ -99,7 +103,6 @@ private:
 	bool full_screen;
 
 	sf::Font font;
-	bool quit = false;
 	bool showFPS = true;
 	Time time;
 	Environment *environment;

@@ -72,7 +72,10 @@ public:
 				end_point = start_point;
 				template_ball.position = start_point;
 				buffor.reserve(balls_per_deploy);
-				for (int i = 0; i < balls_per_deploy; i++) {
+				int temp = balls_per_deploy;//thats just to temporary fix issue with spawning lots of balls with enabled gravity forces
+				if (e->settings.gravity_forces)
+					temp = 1;
+				for (int i = 0; i < temp; i++) {
 					Ball ball(template_ball);
 					if (randomVelocity)
 						ball.velocity.setTryg(randFromTo(20, 200), randTo(M_PI * 2));
@@ -84,8 +87,13 @@ public:
 				}
 			} 
 			else 	if (event.mouseButton.button == sf::Mouse::Right) {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-					e->BSpwn.balls.pop_back();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && !e->BSpwn.balls.empty()) {
+					int temp = balls_per_deploy;//thats just to temporary fix issue with spawning lots of balls with enabled gravity forces
+					if (e->settings.gravity_forces)
+						temp = 1;
+					for (int i = 0; i < temp; i++)
+						e->BSpwn.balls.pop_back();
+				}
 				else
 					e->BSpwn.balls.clear();
 				emit ballsNChanged(e->BSpwn.balls.size());
@@ -126,10 +134,10 @@ public:
 			circle.setFillColor(ball.color);
 			renderer.draw(circle);
 		}
-
+		//drawing nice arrow
 		sf::RectangleShape rect(sf::Vector2f((start_point-end_point).magnitude(), 50));
 		rect.setPosition(0, 0);
-		rect.setFillColor(sf::Color::Red);
+		rect.setFillColor(sf::Color::White);
 		rect.setTexture(&texture);
 		rect.setOrigin(rect.getSize().x, 25);
 		rect.setPosition(start_point.x, start_point.y);

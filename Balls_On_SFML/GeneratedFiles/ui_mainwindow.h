@@ -46,9 +46,9 @@ public:
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout_2;
-    QPushButton *pushButton;
-    QLabel *label_2;
-    QComboBox *comboBox;
+    QPushButton *simulationPushButton;
+    QLabel *toolLabel;
+    QComboBox *toolComboBox;
     QTabWidget *toolsSettingsTabWidget;
     QWidget *ballsTool;
     QWidget *gridLayoutWidget;
@@ -87,9 +87,11 @@ public:
         MainWindowClass->resize(324, 326);
         actionStart_simulation = new QAction(MainWindowClass);
         actionStart_simulation->setObjectName(QStringLiteral("actionStart_simulation"));
+        actionStart_simulation->setCheckable(true);
         actionCollisions = new QAction(MainWindowClass);
         actionCollisions->setObjectName(QStringLiteral("actionCollisions"));
         actionCollisions->setCheckable(true);
+        actionCollisions->setChecked(true);
         actionCollisions->setMenuRole(QAction::TextHeuristicRole);
         actionGravity_Force = new QAction(MainWindowClass);
         actionGravity_Force->setObjectName(QStringLiteral("actionGravity_Force"));
@@ -117,22 +119,23 @@ public:
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
-        pushButton = new QPushButton(verticalLayoutWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        simulationPushButton = new QPushButton(verticalLayoutWidget);
+        simulationPushButton->setObjectName(QStringLiteral("simulationPushButton"));
+        simulationPushButton->setCheckable(true);
 
-        horizontalLayout_2->addWidget(pushButton);
+        horizontalLayout_2->addWidget(simulationPushButton);
 
-        label_2 = new QLabel(verticalLayoutWidget);
-        label_2->setObjectName(QStringLiteral("label_2"));
-        label_2->setLayoutDirection(Qt::LeftToRight);
-        label_2->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
+        toolLabel = new QLabel(verticalLayoutWidget);
+        toolLabel->setObjectName(QStringLiteral("toolLabel"));
+        toolLabel->setLayoutDirection(Qt::LeftToRight);
+        toolLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        horizontalLayout_2->addWidget(label_2);
+        horizontalLayout_2->addWidget(toolLabel);
 
-        comboBox = new QComboBox(verticalLayoutWidget);
-        comboBox->setObjectName(QStringLiteral("comboBox"));
+        toolComboBox = new QComboBox(verticalLayoutWidget);
+        toolComboBox->setObjectName(QStringLiteral("toolComboBox"));
 
-        horizontalLayout_2->addWidget(comboBox);
+        horizontalLayout_2->addWidget(toolComboBox);
 
 
         verticalLayout->addLayout(horizontalLayout_2);
@@ -302,6 +305,8 @@ public:
         menuSettings->addAction(actionResolution);
 
         retranslateUi(MainWindowClass);
+        QObject::connect(toolComboBox, SIGNAL(currentIndexChanged(int)), toolsSettingsTabWidget, SLOT(setCurrentIndex(int)));
+        QObject::connect(toolsSettingsTabWidget, SIGNAL(currentChanged(int)), toolComboBox, SLOT(setCurrentIndex(int)));
 
         toolsSettingsTabWidget->setCurrentIndex(0);
 
@@ -318,11 +323,12 @@ public:
         actionShow_FPS->setText(QApplication::translate("MainWindowClass", "Show FPS", 0));
         actionResolution->setText(QApplication::translate("MainWindowClass", "Resolution", 0));
         actionFull_Screen->setText(QApplication::translate("MainWindowClass", "Full Screen", 0));
-        pushButton->setText(QApplication::translate("MainWindowClass", "Start Simulation", 0));
-        label_2->setText(QApplication::translate("MainWindowClass", "Tool:", 0));
-        comboBox->clear();
-        comboBox->insertItems(0, QStringList()
+        simulationPushButton->setText(QApplication::translate("MainWindowClass", "Start Simulation", 0));
+        toolLabel->setText(QApplication::translate("MainWindowClass", "Tool:", 0));
+        toolComboBox->clear();
+        toolComboBox->insertItems(0, QStringList()
          << QApplication::translate("MainWindowClass", "Ball Spawner", 0)
+         << QApplication::translate("MainWindowClass", "Rectangle Spawner", 0)
          << QApplication::translate("MainWindowClass", "Line Spawner", 0)
         );
         label->setText(QApplication::translate("MainWindowClass", "Number of balls:", 0));

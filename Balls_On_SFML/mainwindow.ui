@@ -27,14 +27,17 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="simulationPushButton">
          <property name="text">
           <string>Start Simulation</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="toolLabel">
          <property name="layoutDirection">
           <enum>Qt::LeftToRight</enum>
          </property>
@@ -47,10 +50,15 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="toolComboBox">
          <item>
           <property name="text">
            <string>Ball Spawner</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Rectangle Spawner</string>
           </property>
          </item>
          <item>
@@ -312,12 +320,18 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionStart_simulation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Start simulation</string>
    </property>
   </action>
   <action name="actionCollisions">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -367,5 +381,38 @@
  <resources>
   <include location="mainwindow.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>toolComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>toolsSettingsTabWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>261</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolsSettingsTabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>toolComboBox</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>160</x>
+     <y>176</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>261</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

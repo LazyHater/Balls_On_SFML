@@ -6,9 +6,10 @@ Simulation::Simulation(sf::VideoMode vm, bool full_screen) : video_mode(vm), ful
 	ball_tool = new BallTool(environment);
 	rectangle_tool = new RectangleTool(environment);
 	line_tool = new LineTool(environment);
-	current_tool = ball_tool;
-	font.loadFromFile("mrs_monster\\mrsmonster.ttf");
-	ball_texture.loadFromFile("textures\\ball.gif");
+	current_tool = ball_tool; 
+	font.loadFromFile("fonts\\Roboto\\Roboto-Light.ttf");
+	ball_texture.loadFromFile("textures\\ball.png");
+	ball_texture.setSmooth(true);
 	view.reset(sf::FloatRect(0, 0, vm.width, vm.height));
 }
 
@@ -56,7 +57,7 @@ void Simulation::process() {
 				break;
 			case sf::Event::MouseWheelScrolled:
 				if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
-					if (event.mouseWheelScroll.delta > 0) {
+					if (event.mouseWheelScroll.delta < 0) {
 						view.zoom(2.0f);
 						scale *= 2.f;
 					}
@@ -92,10 +93,6 @@ void Simulation::process() {
 				break;
 			}
 		}
-		if (quit) {
-			renderer.close();
-			quit = false;
-		}
 
 		environment->update(time.get_delta_t());
 
@@ -111,6 +108,10 @@ void Simulation::process() {
 		time.update();
 
 		QCoreApplication::processEvents();
+		if (quit) {
+			renderer.close();
+			quit = false;
+		}
 	}
 	emit finished();
 }

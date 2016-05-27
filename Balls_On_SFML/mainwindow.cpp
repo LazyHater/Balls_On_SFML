@@ -4,10 +4,11 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	ui.pushButton->setVisible(false);
-	ui.comboBox->setVisible(false);
-	ui.label_2->setVisible(false);
-	connect(ui.actionStart_simulation, SIGNAL(triggered()), this, SLOT(beginSimulation()));
+	//ui.pushButton->setVisible(false);
+	//ui.toolComboBox->setVisible(false);
+	//ui.toolLabel->setVisible(false);
+	connect(ui.actionStart_simulation, SIGNAL(toggled(bool)), this, SLOT(beginSimulation(bool)));
+	connect(ui.simulationPushButton, SIGNAL(toggled(bool)), this, SLOT(beginSimulation(bool)));
 	resolutions_menu = new QMenu(ui.menuSettings);
 	ui.actionResolution->setMenu(resolutions_menu);
 	for (sf::VideoMode vm : sf::VideoMode::getFullscreenModes()) {
@@ -25,48 +26,62 @@ void MainWindow::errorString(QString s) {
 }
 
 void MainWindow::simulationFinished() {
-	ui.actionStart_simulation->setEnabled(true);
+	ui.actionStart_simulation->setChecked(false);
+	ui.actionStart_simulation->setText("Start Simulation");
+	ui.simulationPushButton->setChecked(false);
+	ui.simulationPushButton->setText("Start Simulation");
 };
 
 
 
-void MainWindow::beginSimulation() {
+void MainWindow::beginSimulation(bool b) {
+	if (b) {
+		thread = new QThread;
+		simulation = new Simulation(video_mode, ui.actionFull_Screen->isChecked());
 
+		writeDefaultValues();
+		//connections what  thread neede to work 
+		connect(simulation, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
+		connect(thread, SIGNAL(started()), simulation, SLOT(process()));
+		connect(simulation, SIGNAL(finished()), thread, SLOT(quit()));
+		connect(simulation, SIGNAL(finished()), simulation, SLOT(deleteLater()));
+		connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+		connect(simulation, SIGNAL(finished()), this, SLOT(simulationFinished()));
+		//tools connections
+		connect(simulation->ball_tool, SIGNAL(ballsNChanged(int)), ui.ballsLabel, SLOT(setNum(int)));
+		connect(ui.ballPerClickSpinBox, SIGNAL(valueChanged(int)), simulation->ball_tool, SLOT(setBallsPerDeploy(int)));
+		connect(ui.ballMassDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsMass(double)));
+		connect(ui.ballBounceFactorDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsBounceFactor(double)));
+		connect(ui.ballRadiusDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsRadius(double)));
+		connect(ui.ballRandomVelocityButton, SIGNAL(clicked(bool)), simulation->ball_tool, SLOT(setBallsRandomVelocity(bool)));
+		connect(ui.ballRandomRadiusButton, SIGNAL(clicked(bool)), simulation->ball_tool, SLOT(setBallsRandomRadius(bool)));
+		//time connections
+		connect(ui.verySlowRadioButton, SIGNAL(clicked()), simulation, SLOT(setVerySlowTimeFactor()));
+		connect(ui.slowRadioButton, SIGNAL(clicked()), simulation, SLOT(setSlowTimeFactor()));
+		connect(ui.normalRadioButton, SIGNAL(clicked()), simulation, SLOT(setNormalTimeFactor()));
+		connect(ui.fastRadioButton, SIGNAL(clicked()), simulation, SLOT(setFastTimeFactor()));
+		//fps and tool chose
+		connect(ui.actionShow_FPS, SIGNAL(toggled(bool)), simulation, SLOT(setShowFPS(bool)));
+		connect(ui.toolsSettingsTabWidget, SIGNAL(currentChanged(int)), simulation, SLOT(setTool(int)));
+		connect(ui.toolComboBox, SIGNAL(currentIndexChanged(int)), simulation, SLOT(setTool(int)));
+		//functions of simulation
+		connect(ui.actionCollisions, SIGNAL(toggled(bool)), simulation, SLOT(setBallToBallCollisions(bool)));
+		connect(ui.actionGravity_Force, SIGNAL(toggled(bool)), simulation, SLOT(setGravityForces(bool)));
 
-	thread = new QThread;
-	simulation = new Simulation(video_mode, ui.actionFull_Screen->isChecked());
-
-	writeDefaultValues();
-
-	connect(simulation, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
-	connect(thread, SIGNAL(started()), simulation, SLOT(process()));
-	connect(simulation, SIGNAL(finished()), thread, SLOT(quit()));
-	connect(simulation, SIGNAL(finished()), simulation, SLOT(deleteLater()));
-	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	connect(simulation, SIGNAL(finished()), this, SLOT(simulationFinished()));
-
-	connect(simulation->ball_tool, SIGNAL(ballsNChanged(int)), ui.ballsLabel, SLOT(setNum(int)));
-	connect(ui.ballPerClickSpinBox, SIGNAL(valueChanged(int)), simulation->ball_tool, SLOT(setBallsPerDeploy(int)));
-	connect(ui.ballMassDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsMass(double)));
-	connect(ui.ballBounceFactorDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsBounceFactor(double)));
-	connect(ui.ballRadiusDoubleSpinBox, SIGNAL(valueChanged(double)), simulation->ball_tool, SLOT(setBallsRadius(double)));
-	connect(ui.ballRandomVelocityButton, SIGNAL(clicked(bool)), simulation->ball_tool, SLOT(setBallsRandomVelocity(bool)));
-	connect(ui.ballRandomRadiusButton, SIGNAL(clicked(bool)), simulation->ball_tool, SLOT(setBallsRandomRadius(bool)));
-
-	connect(ui.verySlowRadioButton, SIGNAL(clicked()), simulation, SLOT(setVerySlowTimeFactor()));
-	connect(ui.slowRadioButton, SIGNAL(clicked()), simulation, SLOT(setSlowTimeFactor()));
-	connect(ui.normalRadioButton, SIGNAL(clicked()), simulation, SLOT(setNormalTimeFactor()));
-	connect(ui.fastRadioButton, SIGNAL(clicked()), simulation, SLOT(setFastTimeFactor()));
-
-	connect(ui.actionShow_FPS, SIGNAL(toggled(bool)), simulation, SLOT(setShowFPS(bool)));
-	connect(ui.toolsSettingsTabWidget, SIGNAL(currentChanged(int)), simulation, SLOT(setTool(int)));
-
-	connect(ui.actionCollisions, SIGNAL(toggled(bool)), simulation, SLOT(setBallToBallCollisions(bool)));
-	connect(ui.actionGravity_Force, SIGNAL(toggled(bool)), simulation, SLOT(setGravityForces(bool)));
-	simulation->moveToThread(thread);
-
-	ui.actionStart_simulation->setEnabled(false);
-	thread->start();
+		simulation->moveToThread(thread);
+		//ui.actionStart_simulation->setEnabled(false);
+		ui.actionStart_simulation->setChecked(true);
+		ui.actionStart_simulation->setText("Stop Simulation");
+		ui.simulationPushButton->setChecked(true);
+		ui.simulationPushButton->setText("Stop Simulation");
+		thread->start();
+	} else {
+		ui.actionStart_simulation->setChecked(false);
+		ui.actionStart_simulation->setText("Start Simulation");
+		ui.simulationPushButton->setChecked(false);
+		ui.simulationPushButton->setText("Start Simulation");
+		simulation->quit = true;
+	}
 };
 
 void MainWindow::chooseResolution(QAction* qa) {// messy but works as expected 
