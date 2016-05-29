@@ -42,6 +42,10 @@ public:
     QAction *actionShow_FPS;
     QAction *actionResolution;
     QAction *actionFull_Screen;
+    QAction *actionNew;
+    QAction *actionLoad;
+    QAction *actionSave;
+    QAction *actionSave_As;
     QWidget *centralWidget;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
@@ -106,6 +110,15 @@ public:
         actionFull_Screen = new QAction(MainWindowClass);
         actionFull_Screen->setObjectName(QStringLiteral("actionFull_Screen"));
         actionFull_Screen->setCheckable(true);
+        actionNew = new QAction(MainWindowClass);
+        actionNew->setObjectName(QStringLiteral("actionNew"));
+        actionNew->setVisible(true);
+        actionLoad = new QAction(MainWindowClass);
+        actionLoad->setObjectName(QStringLiteral("actionLoad"));
+        actionSave = new QAction(MainWindowClass);
+        actionSave->setObjectName(QStringLiteral("actionSave"));
+        actionSave_As = new QAction(MainWindowClass);
+        actionSave_As->setObjectName(QStringLiteral("actionSave_As"));
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayoutWidget = new QWidget(centralWidget);
@@ -228,7 +241,7 @@ public:
         ballMassDoubleSpinBox->setObjectName(QStringLiteral("ballMassDoubleSpinBox"));
         ballMassDoubleSpinBox->setMinimum(0);
         ballMassDoubleSpinBox->setMaximum(1e+17);
-        ballMassDoubleSpinBox->setValue(100);
+        ballMassDoubleSpinBox->setValue(1000);
 
         gridLayout->addWidget(ballMassDoubleSpinBox, 1, 1, 1, 1);
 
@@ -281,6 +294,7 @@ public:
         menuBar->setGeometry(QRect(0, 0, 324, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QStringLiteral("menuFile"));
+        menuFile->setEnabled(false);
         menuSimulation = new QMenu(menuBar);
         menuSimulation->setObjectName(QStringLiteral("menuSimulation"));
         menuSettings = new QMenu(menuBar);
@@ -296,6 +310,10 @@ public:
         menuBar->addAction(menuFile->menuAction());
         menuBar->addAction(menuSimulation->menuAction());
         menuBar->addAction(menuSettings->menuAction());
+        menuFile->addAction(actionNew);
+        menuFile->addAction(actionLoad);
+        menuFile->addAction(actionSave);
+        menuFile->addAction(actionSave_As);
         menuSimulation->addAction(actionStart_simulation);
         menuSimulation->addSeparator();
         menuSimulation->addAction(actionCollisions);
@@ -323,6 +341,10 @@ public:
         actionShow_FPS->setText(QApplication::translate("MainWindowClass", "Show FPS", 0));
         actionResolution->setText(QApplication::translate("MainWindowClass", "Resolution", 0));
         actionFull_Screen->setText(QApplication::translate("MainWindowClass", "Full Screen", 0));
+        actionNew->setText(QApplication::translate("MainWindowClass", "New", 0));
+        actionLoad->setText(QApplication::translate("MainWindowClass", "Load", 0));
+        actionSave->setText(QApplication::translate("MainWindowClass", "Save", 0));
+        actionSave_As->setText(QApplication::translate("MainWindowClass", "Save As...", 0));
         simulationPushButton->setText(QApplication::translate("MainWindowClass", "Start Simulation", 0));
         toolLabel->setText(QApplication::translate("MainWindowClass", "Tool:", 0));
         toolComboBox->clear();
@@ -339,6 +361,9 @@ public:
         ballPerClickLabel->setText(QApplication::translate("MainWindowClass", "Balls per click:", 0));
         ballMassLabel->setText(QApplication::translate("MainWindowClass", "Ball mass:", 0));
         ballBounceFactorLabel->setText(QApplication::translate("MainWindowClass", "Ball bounce factor:", 0));
+        ballRadiusDoubleSpinBox->setSuffix(QApplication::translate("MainWindowClass", "[m]", 0));
+        ballBounceFactorDoubleSpinBox->setSuffix(QApplication::translate("MainWindowClass", "[%]", 0));
+        ballMassDoubleSpinBox->setSuffix(QApplication::translate("MainWindowClass", "[kg]", 0));
         toolsSettingsTabWidget->setTabText(toolsSettingsTabWidget->indexOf(ballsTool), QApplication::translate("MainWindowClass", "Ball Spawner", 0));
         toolsSettingsTabWidget->setTabText(toolsSettingsTabWidget->indexOf(tab_2), QApplication::translate("MainWindowClass", "Rectangle Spawner", 0));
         toolsSettingsTabWidget->setTabText(toolsSettingsTabWidget->indexOf(tab_3), QApplication::translate("MainWindowClass", "Line Spawner", 0));

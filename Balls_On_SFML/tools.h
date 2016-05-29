@@ -80,7 +80,7 @@ public:
 					if (randomVelocity)
 						ball.velocity.setTryg(randFromTo(20, 200), randTo(M_PI * 2));
 					if (randomColor)
-						ball.color = sf::Color(randFromTo(20, 255), 0, randFromTo(80, 255));
+						ball.color = sf::Color(randFromTo(20, 255), randFromTo(80, 255), randFromTo(80, 255));
 					if (randomRadius)
 						ball.r = randFromTo(3, 15);
 					buffor.push_back(ball);

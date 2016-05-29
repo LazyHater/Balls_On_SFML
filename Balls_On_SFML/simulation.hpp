@@ -5,6 +5,12 @@
 #include "Vector2D.h"
 #include "Environment.h"
 #include "tools.h"
+#include <fstream>
+#include <iterator>
+#include <algorithm>
+
+using namespace std;
+
 
 class Time { // what a mess
 	sf::Time delta_t = sf::seconds(0);
@@ -44,11 +50,34 @@ public:
 	RectangleTool *rectangle_tool;
 	LineTool *line_tool;
 
+	std::string path = "saves\\balls.sav";
+
 	bool quit = false;
-
 public slots:
-	void process();
+	void saveSimState(QString s) {
+		ofstream ofs(s.toStdString(), ios::binary);
 
+		size_t n = environment->BSpwn.balls.size();
+		ofs.write((char *)&n, sizeof(n));
+		for (int i = 0; i < n; i++)
+			ofs.write((char *)&environment->BSpwn.balls[i], sizeof(Ball));
+	}
+	void loadSimState(QString s) {
+		ifstream ifs(s.toStdString(), ios::binary);
+
+		size_t n;
+		ifs.read((char *)&n, sizeof(n));
+
+		environment->BSpwn.balls.clear();
+		environment->BSpwn.balls.resize(n);
+
+		for (int i = 0; i < n; i++)
+			ifs.read((char *)&environment->BSpwn.balls[i], sizeof(Ball));
+		emit ballsNChanged(environment->BSpwn.balls.size());
+	}
+
+	void process();
+	void pause(bool b) { paused = b; }
 	void setTool(int ID) {
 		switch (ID) {
 		case BALL_TOOL:
@@ -97,6 +126,8 @@ signals:
 	void fpsUpdate(int);
 
 private:
+	bool paused = false;
+
 	sf::Texture ball_texture;
 	sf::View view;
 	sf::VideoMode video_mode;

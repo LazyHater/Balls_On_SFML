@@ -94,7 +94,7 @@ void Simulation::process() {
 			}
 		}
 
-		environment->update(time.get_delta_t());
+		environment->update(time.get_delta_t()*((paused)?0:1.f));//if paused then make 0 delta t
 
 		renderer.clear();
 		drawBalls(renderer, environment->BSpwn.balls);

@@ -3,11 +3,16 @@
 
 #include <QtWidgets/QMainWindow>
 #include <QTimer>
-
+#include <QThread>
+#include <QFileDialog>
+#include <iostream>
+#include <fstream>
+#include <iterator>
+#include <algorithm>
 #include "ui_mainwindow.h"
 #include "simulation.hpp"
-#include <iostream>
-#include <QThread>
+
+using namespace std;
 
 class MainWindow : public QMainWindow
 {
@@ -16,13 +21,32 @@ class MainWindow : public QMainWindow
 public:
 	MainWindow(QWidget *parent = 0);
 
+signals:
+	void savePath(QString s);
+	void loadPath(QString s);
 private slots:
 	void beginSimulation(bool);
 	void simulationFinished();
 	void errorString(QString); 
 	void chooseResolution(QAction* qa); // messy but works as expected 
-signals:
+	void saveAs() {
+		simulation->pause(true);
+		QString path = QFileDialog::getSaveFileName(this,
+			tr("Save State"), "saves\\", tr("Save Files (*.sav)"));
+		emit savePath(path);
 
+		//simulation->save(path.toStdString());
+		simulation->pause(false);
+	}
+	void load() {
+		//simulation->pause(true);
+		QString path = QFileDialog::getOpenFileName(this,
+			tr("Load State"), "saves\\", tr("Save Files (*.sav)"));
+		//simulation->load(path.toStdString());
+		emit loadPath(path);
+		//simulation->pause(false);
+
+	}
 private:
 	void writeDefaultValues() {
 		//simulation

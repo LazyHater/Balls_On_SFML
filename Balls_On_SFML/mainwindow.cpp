@@ -4,10 +4,12 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-	//ui.pushButton->setVisible(false);
-	//ui.toolComboBox->setVisible(false);
-	//ui.toolLabel->setVisible(false);
-	connect(ui.actionStart_simulation, SIGNAL(toggled(bool)), this, SLOT(beginSimulation(bool)));
+
+	connect(ui.actionSave_As, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(ui.actionLoad, SIGNAL(triggered()), this, SLOT(load()));
+
+
+	//connect(ui.actionStart_simulation, SIGNAL(toggled(bool)), this, SLOT(beginSimulation(bool)));
 	connect(ui.simulationPushButton, SIGNAL(toggled(bool)), this, SLOT(beginSimulation(bool)));
 	resolutions_menu = new QMenu(ui.menuSettings);
 	ui.actionResolution->setMenu(resolutions_menu);
@@ -74,6 +76,9 @@ void MainWindow::beginSimulation(bool b) {
 		ui.actionStart_simulation->setText("Stop Simulation");
 		ui.simulationPushButton->setChecked(true);
 		ui.simulationPushButton->setText("Stop Simulation");
+
+		connect(this, SIGNAL(savePath(QString)), simulation, SLOT(saveSimState(QString)));
+		connect(this, SIGNAL(loadPath(QString)), simulation, SLOT(loadSimState(QString)));
 		thread->start();
 	} else {
 		ui.actionStart_simulation->setChecked(false);
