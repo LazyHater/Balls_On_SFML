@@ -46,6 +46,7 @@ public:
     QAction *actionLoad;
     QAction *actionSave;
     QAction *actionSave_As;
+    QAction *actionPause;
     QWidget *centralWidget;
     QWidget *verticalLayoutWidget;
     QVBoxLayout *verticalLayout;
@@ -119,6 +120,10 @@ public:
         actionSave->setObjectName(QStringLiteral("actionSave"));
         actionSave_As = new QAction(MainWindowClass);
         actionSave_As->setObjectName(QStringLiteral("actionSave_As"));
+        actionPause = new QAction(MainWindowClass);
+        actionPause->setObjectName(QStringLiteral("actionPause"));
+        actionPause->setCheckable(true);
+        actionPause->setEnabled(false);
         centralWidget = new QWidget(MainWindowClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayoutWidget = new QWidget(centralWidget);
@@ -315,6 +320,7 @@ public:
         menuFile->addAction(actionSave);
         menuFile->addAction(actionSave_As);
         menuSimulation->addAction(actionStart_simulation);
+        menuSimulation->addAction(actionPause);
         menuSimulation->addSeparator();
         menuSimulation->addAction(actionCollisions);
         menuSimulation->addAction(actionGravity_Force);
@@ -345,6 +351,7 @@ public:
         actionLoad->setText(QApplication::translate("MainWindowClass", "Load", 0));
         actionSave->setText(QApplication::translate("MainWindowClass", "Save", 0));
         actionSave_As->setText(QApplication::translate("MainWindowClass", "Save As...", 0));
+        actionPause->setText(QApplication::translate("MainWindowClass", "Pause", 0));
         simulationPushButton->setText(QApplication::translate("MainWindowClass", "Start Simulation", 0));
         toolLabel->setText(QApplication::translate("MainWindowClass", "Tool:", 0));
         toolComboBox->clear();

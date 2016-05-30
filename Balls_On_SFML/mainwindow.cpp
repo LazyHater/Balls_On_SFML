@@ -32,6 +32,8 @@ void MainWindow::simulationFinished() {
 	ui.actionStart_simulation->setText("Start Simulation");
 	ui.simulationPushButton->setChecked(false);
 	ui.simulationPushButton->setText("Start Simulation");
+	ui.actionPause->setEnabled(false);
+
 };
 
 
@@ -40,6 +42,9 @@ void MainWindow::beginSimulation(bool b) {
 	if (b) {
 		thread = new QThread;
 		simulation = new Simulation(video_mode, ui.actionFull_Screen->isChecked());
+
+		ui.actionPause->setEnabled(true);
+		connect(ui.actionPause, SIGNAL(toggled(bool)), simulation, SLOT(pause(bool))); //pause button
 
 		writeDefaultValues();
 		//connections what  thread neede to work 

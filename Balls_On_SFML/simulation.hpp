@@ -50,7 +50,7 @@ public:
 	RectangleTool *rectangle_tool;
 	LineTool *line_tool;
 
-	std::string path = "saves\\balls.sav";
+	QString quick_save_path = "saves\\quick_save.sav";
 
 	bool quit = false;
 public slots:
@@ -61,18 +61,23 @@ public slots:
 		ofs.write((char *)&n, sizeof(n));
 		for (int i = 0; i < n; i++)
 			ofs.write((char *)&environment->BSpwn.balls[i], sizeof(Ball));
+		ofs.close();
 	}
 	void loadSimState(QString s) {
 		ifstream ifs(s.toStdString(), ios::binary);
-
+	//	D("1");
 		size_t n;
 		ifs.read((char *)&n, sizeof(n));
+	//	D("2");
 
 		environment->BSpwn.balls.clear();
 		environment->BSpwn.balls.resize(n);
+	//	D("3");
 
 		for (int i = 0; i < n; i++)
 			ifs.read((char *)&environment->BSpwn.balls[i], sizeof(Ball));
+	//	D("4");
+		ifs.close();
 		emit ballsNChanged(environment->BSpwn.balls.size());
 	}
 

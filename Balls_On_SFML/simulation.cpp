@@ -88,6 +88,11 @@ void Simulation::process() {
 					break;				
 				case sf::Keyboard::Escape:
 					quit = true;
+				case sf::Keyboard::F5:
+					saveSimState(quick_save_path);
+					break;
+				case sf::Keyboard::F7:
+					loadSimState(quick_save_path);
 					break;
 				}
 				break;
